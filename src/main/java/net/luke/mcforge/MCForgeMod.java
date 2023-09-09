@@ -1,6 +1,7 @@
 package net.luke.mcforge;
 
 import com.mojang.logging.LogUtils;
+import net.luke.mcforge.item.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.food.FoodProperties;
@@ -37,13 +38,24 @@ public class MCForgeMod {
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
+    public MCForgeMod() {
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        modEventBus.addListener(this::commonSetup);
+
+        MinecraftForge.EVENT_BUS.register(this);
+        modEventBus.addListener(this::addCreative);
+    }
+
     private void commonSetup(final FMLCommonSetupEvent event) {
 
     }
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+            event.accept(ModItems.ALEXANDRITE);
+        }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
